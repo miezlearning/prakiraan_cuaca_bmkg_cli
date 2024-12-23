@@ -3,6 +3,7 @@ from datetime import datetime
 from tabulate import tabulate
 from rich.console import Console
 from rich.prompt import Prompt, Confirm
+from utils.display.header import pilih_provinsi_header, pilih_kabupaten_header, pilih_kecamatan_header, pilih_kelurahan_header
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,13 +13,24 @@ def display_menu(options, adm_level_name):
     """
     Menampilkan menu pilihan dan mengembalikan kode yang dipilih.
     """
-    console.print(f"\n[bold cyan]Pilih {adm_level_name}:[/bold cyan]")
+    if adm_level_name == "Provinsi":
+        pilih_provinsi_header()
+    elif adm_level_name == "Kabupaten/Kota":
+        pilih_kabupaten_header()
+    elif adm_level_name == "Kecamatan":
+        pilih_kecamatan_header()
+    elif adm_level_name == "Kelurahan":
+        pilih_kelurahan_header()
     for idx, (code, name) in enumerate(options, start=1):
         console.print(f"[yellow]{idx}.[/yellow] {name}")
 
     while True:
         try:
-            pilihan = Prompt.ask(f"Masukkan pilihan {adm_level_name} (1-{len(options)})", default="1")
+            pilihan = Prompt.ask(
+    f"[bold cyan]🔍 Masukkan pilihan {adm_level_name} (1-{len(options)}) 🔍:[/bold cyan]",
+    default="1",
+    show_default=True
+)
             pilihan = int(pilihan)
             if 1 <= pilihan <= len(options):
                 selected_code = options[pilihan - 1][0]

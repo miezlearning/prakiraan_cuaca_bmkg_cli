@@ -4,8 +4,9 @@ import logging
 from rich.console import Console
 from utils.loader.loader import load_wilayah_from_csv
 from utils.display.display import tampilkan_prakiraan, display_menu
+from utils.display.header import opening_header
 from api.fetch_api import fetch_prakiraan_cuaca
-from utils.utils import bersihkan_layar
+from utils.utils import bersihkan_layar, pause
 from rich.prompt import Confirm
 
 console = Console()
@@ -57,7 +58,10 @@ def pilih_wilayah_dinamis(wilayah_hierarchy):
 
         # Tanyakan apakah ingin melanjutkan ke tingkat berikutnya
         if tingkat < max_tingkat:
-            lanjut = Confirm.ask(f"Apakah kamu ingin melanjutkan cek {adm_levels[tingkat +1]['name']}?")
+            lanjut = Confirm.ask(
+    f"[bold magenta]✨ Apakah kamu siap untuk melanjutkan cek {adm_levels[tingkat + 1]['name']}? ✨[/bold magenta]",
+    default=True
+)
             if lanjut:
                 # Set current_level ke children dari yang dipilih
                 temp_level = wilayah_hierarchy
@@ -73,13 +77,11 @@ def pilih_wilayah_dinamis(wilayah_hierarchy):
                 break
         else:
             console.print("[bold green]Yeayy kamu telah mencapai tingkat wilayah terakhir.😁[/bold green]")
+            pause()
+            start()
             break
 
-def main():
-    # Tampilkan pesan selamat datang dengan warna
-    console.print("[bold cyan]Selamat datang di program cek cuaca.[/bold cyan]\n")
-
-    # Memuat data wilayah dari base.csv
+def start():
     try:
         wilayah_hierarchy = load_wilayah_from_csv('data/base.csv')
     except Exception:
@@ -88,6 +90,16 @@ def main():
 
     # Memulai pemilihan wilayah secara dinamis
     pilih_wilayah_dinamis(wilayah_hierarchy)
+
+def main():
+    # Tampilkan pesan selamat datang dengan warna
+    # console.print("[bold cyan]Selamat datang di program cek cuaca.[/bold cyan]\n")
+    bersihkan_layar()
+    opening_header()
+    pause()
+
+    # Memuat data wilayah dari base.csv
+    start()
 
 if __name__ == "__main__":
     main()
